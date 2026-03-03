@@ -1,0 +1,41 @@
+# Datos generados (demasiado pesados para GitHub)
+data/
+*.npy
+
+# Modelos entrenados
+models/
+*.pt
+*.pth
+gemma3_qlora/
+
+# Dataset MIT-BIH descargado
+mitdb/
+
+# Índice FAISS y chunks
+faiss_index.bin
+chunks.json
+
+# Dataset Q&A
+*.jsonl
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+venv/
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Google Colab
+.config/
+google/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
