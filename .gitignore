@@ -3,6 +3,7 @@ data/
 *.npy
 
 # Modelos entrenados
+models/
 *.pt
 *.pth
 gemma3_qlora/
