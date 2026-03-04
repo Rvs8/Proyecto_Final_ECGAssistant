@@ -1,4 +1,4 @@
-\# ECGAssistant — Sistema de Apoyo al Diagnóstico Cardíaco
+# ECGAssistant — Sistema de Apoyo al Diagnóstico Cardíaco
 
 
 
@@ -18,7 +18,7 @@ clasificar señales ECG y generar explicaciones clínicas en español.
 
 
 
-\## Pipeline del sistema
+## Pipeline del sistema
 
 ```
 
@@ -28,11 +28,11 @@ Señal ECG → CNN clasifica → Normal/Anormal → RAG busca contexto → LLM g
 
 
 
-1\. \*\*CNN 1D\*\* clasifica latidos cardíacos como normales o anormales
+1. **CNN 1D** clasifica latidos cardíacos como normales o anormales
 
-2\. \*\*RAG con FAISS\*\* recupera contexto clínico relevante de documentos médicos
+2. **RAG con FAISS** recupera contexto clínico relevante de documentos médicos
 
-3\. \*\*Gemma 3 4B fine-tuneado con QLoRA\*\* genera explicaciones en español
+3. **Gemma 3 4B fine-tuneado con QLoRA** genera explicaciones en español
 
 
 
@@ -40,24 +40,20 @@ Señal ECG → CNN clasifica → Normal/Anormal → RAG busca contexto → LLM g
 
 
 
-\## Resultados
-
-
+## Resultados
 
 | Métrica | Valor |
-
 |---|---|
-
 | F1-score CNN (test) | 0.9867 |
-
 | Accuracy CNN (test) | 99% |
-
 | AUC-ROC | 0.9988 |
-
 | Recall clase anormal | 0.99 |
 
-| Dataset | MIT-BIH Arrhythmia Database |
+## Dataset
 
+| | |
+|---|---|
+| Nombre | MIT-BIH Arrhythmia Database |
 | Latidos procesados | 73.737 |
 
 
@@ -66,39 +62,39 @@ Señal ECG → CNN clasifica → Normal/Anormal → RAG busca contexto → LLM g
 
 
 
-\## Estructura del repositorio
+## Estructura del repositorio
 
 ```
 
-Proyecto\\\_Final\\\_ECGAssistant/
+Proyecto_Final_ECGAssistant/
 
 │
 
 ├── notebooks/
 
-│   ├── 01\\\_definicion\\\_problema.ipynb
+│   ├── 01_definicion_problema.ipynb
 
-│   ├── 02\\\_recoleccion\\\_datos.ipynb
+│   ├── 02_recoleccion_datos.ipynb
 
-│   ├── 03\\\_preprocesamiento.ipynb
+│   ├── 03_preprocesamiento.ipynb
 
-│   ├── 04\\\_eda.ipynb
+│   ├── 04_eda.ipynb
 
-│   ├── 05\\\_entrenamiento\\\_cnn.ipynb
+│   ├── 05_entrenamiento_cnn.ipynb
 
-│   ├── 06\\\_evaluacion\\\_modelo.ipynb
+│   ├── 06_evaluacion_modelo.ipynb
 
-│   ├── 07\\\_finetuning\\\_gemma.ipynb
+│   ├── 07_finetuning_gemma.ipynb
 
-│   ├── 08\\\_rag\\\_faiss.ipynb
+│   ├── 08_rag_faiss.ipynb
 
-│   ├── 09\\\_pipeline\\\_completo.ipynb
+│   ├── 09_pipeline_completo.ipynb
 
-│   └── 10\\\_conclusiones.ipynb
+│   └── 10_conclusiones.ipynb
 
 │
 
-├── rag\\\_documents/
+├── rag_documents/
 
 │   └── (documentos clínicos en formato .md)
 
@@ -106,11 +102,11 @@ Proyecto\\\_Final\\\_ECGAssistant/
 
 ├── models/
 
-│   └── ecg\\\_cnn.pt
+│   └── ecg_cnn.pt
 
 │
 
-├── gemma3\\\_qlora/
+├── gemma3_qlora/
 
 │   └── (generado ejecutando el notebook 07, no incluido por tamaño)
 
@@ -142,29 +138,29 @@ Proyecto\\\_Final\\\_ECGAssistant/
 
 
 
-\## Instalación y ejecución
+## Instalación y ejecución
 
 
 
-\### Requisitos
+### Requisitos
 
 
 
-\- Python 3.10+
+- Python 3.10+
 
-\- GPU recomendada para los notebooks 07, 08 y 09 (Colab con GPU T4 o superior)
+- GPU recomendada para los notebooks 07, 08 y 09 (Colab con GPU T4 o superior)
 
-\- Cuenta en Hugging Face con acceso a `google/gemma-3-4b-it`
+- Cuenta en Hugging Face con acceso a `google/gemma-3-4b-it`
 
 
 
-\### Instalación
+### Instalación
 
 ```bash
 
-git clone https://github.com/Rvs8/Proyecto\\\_Final\\\_ECGAssistant.git
+git clone https://github.com/Rvs8/Proyecto_Final_ECGAssistant.git
 
-cd Proyecto\\\_Final\\\_ECGAssistant
+cd Proyecto_Final_ECGAssistant
 
 pip install -r requirements.txt
 
@@ -172,31 +168,31 @@ pip install -r requirements.txt
 
 
 
-\### Ejecución en Google Colab
+### Ejecución en Google Colab
 
 
 
-1\. Sube la carpeta del proyecto a Google Drive
+1. Sube la carpeta del proyecto a Google Drive
 
-2\. Añade tu token de Hugging Face como secreto en Colab con el nombre `HF\\\_TOKEN`
+2. Añade tu token de Hugging Face como secreto en Colab con el nombre `HF_TOKEN`
 
-3\. Ejecuta los notebooks en orden del 01 al 09
+3. Ejecuta los notebooks en orden del 01 al 10
 
-4\. El notebook 03 genera los archivos `.npy` necesarios para los siguientes
+4. El notebook 03 genera los archivos `.npy` necesarios para los siguientes
 
-5\. El notebook 07 genera la carpeta `gemma3\\\_qlora/` necesaria para el 09
+5. El notebook 07 genera la carpeta `gemma3_qlora/` necesaria para el 09
 
-6\. El notebook 08 genera `faiss\\\_index.bin` y `chunks.json` necesarios para el 09
+6. El notebook 08 genera `faiss_index.bin` y `chunks.json` necesarios para el 09
 
 
 
-\### Ejecución local
+### Ejecución local
 
 ```bash
 
-\\# Los notebooks 01-06 funcionan en CPU sin problema
+# Los notebooks 01-06 y 10 funcionan en CPU sin problema
 
-\\# Los notebooks 07, 08 y 09 requieren GPU con al menos 8GB de VRAM
+# Los notebooks 07, 08 y 09 requieren GPU con al menos 8GB de VRAM
 
 jupyter notebook notebooks/
 
@@ -208,25 +204,25 @@ jupyter notebook notebooks/
 
 
 
-\## Dataset
+## Dataset
 
 
 
-\*\*MIT-BIH Arrhythmia Database\*\* — PhysioNet
+**MIT-BIH Arrhythmia Database** — PhysioNet
 
 https://physionet.org/content/mitdb/1.0.0/
 
 
 
-\- 48 registros de pacientes diferentes
+- 48 registros de pacientes diferentes
 
-\- Frecuencia de muestreo: 360 Hz
+- Frecuencia de muestreo: 360 Hz
 
-\- ~110.000 latidos anotados manualmente por cardiólogos
+- ~110.000 latidos anotados manualmente por cardiólogos
 
-\- 18 tipos de arritmias diferentes
+- 18 tipos de arritmias diferentes
 
-\- Datos anonimizados, uso libre para investigación
+- Datos anonimizados, uso libre para investigación
 
 
 
@@ -238,7 +234,7 @@ El dataset se descarga automáticamente ejecutando el notebook 02.
 
 
 
-\## Tecnologías utilizadas
+## Tecnologías utilizadas
 
 
 
@@ -266,7 +262,7 @@ El dataset se descarga automáticamente ejecutando el notebook 02.
 
 
 
-\## Equipo
+## Equipo
 
 
 
@@ -276,13 +272,13 @@ semanales, backlog en Trello y control de versiones en GitHub.
 
 
 
-\- Roger Vergés
+- Roger Vergés
 
-\- Raúl Sánchez
+- Raúl Sánchez
 
-\- Matteo Romanello
+- Matteo Romanello
 
-\- Matias Cavallo
+- Matias Cavallo
 
 
 
@@ -294,7 +290,7 @@ Bootcamp de Inteligencia Artificial — KeepCoding ED.4 — 2026
 
 
 
-\## Aviso
+## Aviso
 
 
 
