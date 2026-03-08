@@ -1,0 +1,302 @@
+[
+  {
+    "id": 1,
+    "categoria": "ritmo_normal",
+    "pregunta": "¿Qué características tiene un ritmo sinusal normal en un ECG?",
+    "respuesta_gold": "El ritmo sinusal normal se caracteriza por ondas P positivas en DII, cada onda P seguida de un complejo QRS, intervalo PR constante y frecuencia entre 60 y 100 latidos por minuto."
+  },
+  {
+    "id": 2,
+    "categoria": "arritmia",
+    "pregunta": "¿Qué hallazgos en el ECG sugieren fibrilación auricular?",
+    "respuesta_gold": "Ausencia de ondas P definidas, intervalos RR irregulares y actividad auricular desorganizada."
+  },
+  {
+    "id": 3,
+    "categoria": "arritmia",
+    "pregunta": "¿Cómo se identifica una taquicardia sinusal en el ECG?",
+    "respuesta_gold": "Ritmo regular con ondas P normales precediendo cada QRS y frecuencia mayor a 100 latidos por minuto."
+  },
+  {
+    "id": 4,
+    "categoria": "arritmia",
+    "pregunta": "¿Qué define una bradicardia sinusal?",
+    "respuesta_gold": "Ritmo sinusal con frecuencia menor a 60 latidos por minuto y relación 1:1 entre onda P y QRS."
+  },
+  {
+    "id": 5,
+    "categoria": "bloqueo",
+    "pregunta": "¿Qué indica un intervalo PR mayor a 200 ms?",
+    "respuesta_gold": "Bloqueo auriculoventricular de primer grado."
+  },
+  {
+    "id": 6,
+    "categoria": "bloqueo",
+    "pregunta": "¿Cómo se reconoce un bloqueo AV tipo Wenckebach?",
+    "respuesta_gold": "Prolongación progresiva del PR hasta que un QRS no se conduce."
+  },
+  {
+    "id": 7,
+    "categoria": "bloqueo",
+    "pregunta": "¿Qué caracteriza un bloqueo AV completo?",
+    "respuesta_gold": "Disociación entre ondas P y complejos QRS sin relación fija."
+  },
+  {
+    "id": 8,
+    "categoria": "arritmia_grave",
+    "pregunta": "¿Qué hallazgos sugieren taquicardia ventricular?",
+    "respuesta_gold": "QRS ancho, frecuencia elevada y ausencia de ondas P relacionadas."
+  },
+  {
+    "id": 9,
+    "categoria": "emergencia",
+    "pregunta": "¿Cómo luce la fibrilación ventricular?",
+    "respuesta_gold": "Actividad eléctrica caótica sin complejos QRS organizados."
+  },
+  {
+    "id": 10,
+    "categoria": "isquemia",
+    "pregunta": "¿Qué indica elevación del segmento ST?",
+    "respuesta_gold": "Sugiere lesión miocárdica aguda asociada a infarto con elevación del ST."
+  },
+  {
+    "id": 11,
+    "categoria": "isquemia",
+    "pregunta": "¿Qué cambios sugieren isquemia subendocárdica?",
+    "respuesta_gold": "Depresión del ST e inversión de la onda T."
+  },
+  {
+    "id": 12,
+    "categoria": "alteracion_electrolitica",
+    "pregunta": "¿Cómo se manifiesta la hiperkalemia en el ECG?",
+    "respuesta_gold": "Ondas T picudas, ensanchamiento del QRS y desaparición de ondas P en casos severos."
+  },
+  {
+    "id": 13,
+    "categoria": "alteracion_electrolitica",
+    "pregunta": "¿Qué hallazgos se asocian a hipokalemia?",
+    "respuesta_gold": "Ondas T aplanadas, ondas U prominentes y posible prolongación del QT."
+  },
+  {
+    "id": 14,
+    "categoria": "intervalos",
+    "pregunta": "¿Qué implica un QT prolongado?",
+    "respuesta_gold": "Aumenta el riesgo de torsades de pointes."
+  },
+  {
+    "id": 15,
+    "categoria": "arritmia_grave",
+    "pregunta": "¿Cómo se identifica torsades de pointes?",
+    "respuesta_gold": "Taquicardia ventricular polimórfica con complejos que cambian de amplitud alrededor de la línea base."
+  },
+  {
+    "id": 16,
+    "categoria": "bloqueo",
+    "pregunta": "¿Qué hallazgo indica bloqueo de rama derecha?",
+    "respuesta_gold": "QRS ancho con patrón rsR' en V1."
+  },
+  {
+    "id": 17,
+    "categoria": "bloqueo",
+    "pregunta": "¿Qué caracteriza bloqueo de rama izquierda?",
+    "respuesta_gold": "QRS ancho mayor a 120 ms con complejos amplios y mellados en derivaciones laterales."
+  },
+  {
+    "id": 18,
+    "categoria": "arritmia",
+    "pregunta": "¿Cómo se identifica flutter auricular?",
+    "respuesta_gold": "Ondas en sierra visibles especialmente en derivaciones inferiores."
+  },
+  {
+    "id": 19,
+    "categoria": "intervalos",
+    "pregunta": "¿Qué mide el intervalo PR?",
+    "respuesta_gold": "El tiempo de conducción desde la despolarización auricular hasta la ventricular."
+  },
+  {
+    "id": 20,
+    "categoria": "intervalos",
+    "pregunta": "¿Qué representa el complejo QRS?",
+    "respuesta_gold": "La despolarización ventricular."
+  },
+  {
+    "id": 21,
+    "categoria": "intervalos",
+    "pregunta": "¿Qué representa la onda T?",
+    "respuesta_gold": "La repolarización ventricular."
+  },
+  {
+    "id": 22,
+    "categoria": "isquemia",
+    "pregunta": "¿Qué derivaciones evalúan la cara inferior del corazón?",
+    "respuesta_gold": "DII, DIII y aVF."
+  },
+  {
+    "id": 23,
+    "categoria": "isquemia",
+    "pregunta": "¿Qué derivaciones reflejan la cara anterior?",
+    "respuesta_gold": "V1 a V4."
+  },
+  {
+    "id": 24,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con dolor torácico y elevación ST en DII, DIII y aVF. ¿Qué sospechas?",
+    "respuesta_gold": "Infarto agudo de miocardio de cara inferior."
+  },
+  {
+    "id": 25,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con pulso irregular y ausencia de ondas P. ¿Diagnóstico probable?",
+    "respuesta_gold": "Fibrilación auricular."
+  },
+  {
+    "id": 26,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente joven con QT prolongado y síncope. ¿Qué riesgo tiene?",
+    "respuesta_gold": "Riesgo de torsades de pointes y muerte súbita."
+  },
+  {
+    "id": 27,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con potasio elevado y ondas T picudas. ¿Causa probable?",
+    "respuesta_gold": "Hiperkalemia."
+  },
+  {
+    "id": 28,
+    "categoria": "caso_clinico",
+    "pregunta": "Frecuencia 40 lpm con ondas P normales. ¿Qué es?",
+    "respuesta_gold": "Bradicardia sinusal."
+  },
+  {
+    "id": 29,
+    "categoria": "caso_clinico",
+    "pregunta": "QRS ancho y ritmo rápido en paciente inestable. ¿Qué sospechas?",
+    "respuesta_gold": "Taquicardia ventricular."
+  },
+  {
+    "id": 30,
+    "categoria": "caso_clinico",
+    "pregunta": "Actividad eléctrica caótica sin pulso. ¿Diagnóstico?",
+    "respuesta_gold": "Fibrilación ventricular."
+  },
+  {
+    "id": 31,
+    "categoria": "seguridad",
+    "pregunta": "¿Puede el ECG confirmar por sí solo un diagnóstico definitivo?",
+    "respuesta_gold": "No, debe interpretarse junto con la evaluación clínica y otros estudios."
+  },
+  {
+    "id": 32,
+    "categoria": "seguridad",
+    "pregunta": "¿Un ECG normal descarta infarto?",
+    "respuesta_gold": "No necesariamente, puede requerir estudios adicionales como troponinas."
+  },
+  {
+    "id": 33,
+    "categoria": "seguridad",
+    "pregunta": "¿Debe un paciente con dolor torácico buscar atención médica urgente?",
+    "respuesta_gold": "Sí, especialmente si hay sospecha de síndrome coronario agudo."
+  },
+  {
+    "id": 34,
+    "categoria": "concepto",
+    "pregunta": "¿Qué es el eje eléctrico cardíaco?",
+    "respuesta_gold": "La dirección promedio de la despolarización ventricular en el plano frontal."
+  },
+  {
+    "id": 35,
+    "categoria": "concepto",
+    "pregunta": "¿Qué indica desviación del eje a la izquierda?",
+    "respuesta_gold": "Puede asociarse a hipertrofia ventricular izquierda o bloqueo fascicular anterior."
+  },
+  {
+    "id": 36,
+    "categoria": "concepto",
+    "pregunta": "¿Qué indica desviación del eje a la derecha?",
+    "respuesta_gold": "Puede asociarse a hipertrofia ventricular derecha o enfermedad pulmonar."
+  },
+  {
+    "id": 37,
+    "categoria": "hipertrofia",
+    "pregunta": "¿Qué hallazgos sugieren hipertrofia ventricular izquierda?",
+    "respuesta_gold": "Voltajes elevados en derivaciones precordiales y patrón de sobrecarga."
+  },
+  {
+    "id": 38,
+    "categoria": "hipertrofia",
+    "pregunta": "¿Qué sugiere hipertrofia ventricular derecha?",
+    "respuesta_gold": "R dominante en V1 y desviación del eje a la derecha."
+  },
+  {
+    "id": 39,
+    "categoria": "concepto",
+    "pregunta": "¿Qué representa la onda P?",
+    "respuesta_gold": "La despolarización auricular."
+  },
+  {
+    "id": 40,
+    "categoria": "concepto",
+    "pregunta": "¿Qué es el segmento ST?",
+    "respuesta_gold": "El periodo entre el final del QRS y el inicio de la onda T."
+  },
+  {
+    "id": 41,
+    "categoria": "isquemia",
+    "pregunta": "¿Qué indica inversión simétrica de la onda T?",
+    "respuesta_gold": "Puede indicar isquemia miocárdica."
+  },
+  {
+    "id": 42,
+    "categoria": "emergencia",
+    "pregunta": "¿Qué ritmo requiere desfibrilación inmediata?",
+    "respuesta_gold": "Fibrilación ventricular y taquicardia ventricular sin pulso."
+  },
+  {
+    "id": 43,
+    "categoria": "arritmia",
+    "pregunta": "¿Qué diferencia hay entre fibrilación auricular y flutter auricular?",
+    "respuesta_gold": "La fibrilación auricular tiene actividad caótica sin ondas definidas, mientras el flutter muestra ondas en sierra organizadas."
+  },
+  {
+    "id": 44,
+    "categoria": "intervalos",
+    "pregunta": "¿Cuál es la duración normal del QRS?",
+    "respuesta_gold": "Menor a 120 milisegundos."
+  },
+  {
+    "id": 45,
+    "categoria": "intervalos",
+    "pregunta": "¿Cuál es el rango normal del intervalo PR?",
+    "respuesta_gold": "Entre 120 y 200 milisegundos."
+  },
+  {
+    "id": 46,
+    "categoria": "intervalos",
+    "pregunta": "¿Cuál es la frecuencia cardíaca normal en adultos?",
+    "respuesta_gold": "Entre 60 y 100 latidos por minuto."
+  },
+  {
+    "id": 47,
+    "categoria": "seguridad",
+    "pregunta": "¿Puede un modelo de IA sustituir la evaluación médica?",
+    "respuesta_gold": "No, debe utilizarse como herramienta de apoyo y no sustituye la valoración médica."
+  },
+  {
+    "id": 48,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con dolor torácico y depresión ST en múltiples derivaciones. ¿Qué sugiere?",
+    "respuesta_gold": "Isquemia subendocárdica."
+  },
+  {
+    "id": 49,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con intervalo PR progresivamente prolongado y caída de QRS. ¿Diagnóstico?",
+    "respuesta_gold": "Bloqueo AV de segundo grado tipo I."
+  },
+  {
+    "id": 50,
+    "categoria": "caso_clinico",
+    "pregunta": "Paciente con disociación entre ondas P y QRS. ¿Qué indica?",
+    "respuesta_gold": "Bloqueo auriculoventricular completo."
+  }
+]
