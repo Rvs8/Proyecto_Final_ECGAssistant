@@ -88,23 +88,23 @@ El dataset se descarga automáticamente ejecutando el notebook 02.
 Proyecto_Final_ECGAssistant/
 │
 ├── notebooks/
-│   ├── 01_Definicion_del_problema.ipynb       ← problema, métricas y ética
-│   ├── 02_Recoleccion_de_Datos.ipynb          ← descarga MIT-BIH
-│   ├── 03_Preprocesamiento_de_Datos.ipynb     ← segmentación y normalización
+│   ├── 01_Definicion_del_problema.ipynb        ← problema, métricas y ética
+│   ├── 02_Recoleccion_de_Datos.ipynb           ← descarga MIT-BIH
+│   ├── 03_Preprocesamiento_de_Datos.ipynb      ← segmentación y normalización
 │   ├── 04_Analisis_Exploratorio_de_Datos.ipynb ← EDA y visualizaciones
-│   ├── 05_Entrenamiento_CNN.ipynb             ← arquitectura y entrenamiento
-│   ├── 06_Evaluacion_del_Modelo.ipynb         ← F1, AUC, matriz de confusión
-│   ├── 07_Fine_tuning_Gemma_3_con_QLoRA.ipynb ← fine-tuning del LLM
-│   ├── 08_RAG_con_FAISS.ipynb                 ← índice FAISS y retrieval
-│   ├── 09_Pipeline_Completo.ipynb             ← integración CNN + RAG + LLM
+│   ├── 05_Entrenamiento_CNN.ipynb              ← arquitectura y entrenamiento
+│   ├── 06_Evaluacion_del_Modelo.ipynb          ← F1, AUC, matriz de confusión
+│   ├── 07_Fine_tuning_Gemma_3_con_QLoRA.ipynb  ← fine-tuning del LLM
+│   ├── 08_RAG_con_FAISS.ipynb                  ← índice FAISS y retrieval
+│   ├── 09_Pipeline_Completo.ipynb              ← integración CNN + RAG + LLM
 │   ├── 10_Evaluacion_LLM_Rubricas_Clinicas.ipynb ← evaluación del LLM
-│   └── 11_Conclusiones.ipynb                 ← reflexiones y trabajo futuro
+│   └── 11_Conclusiones.ipynb                  ← reflexiones y trabajo futuro
 │
 ├── rag_documents/
 │   └── (documentos clínicos en formato .md)
 │
 ├── eval/
-│   └── ecg_eval_model_dataset.json            ← dataset de evaluación LLM
+│   └── ecg_eval_model_dataset.json             ← dataset de evaluación LLM
 │
 ├── gemma3_qlora/
 │   └── (generado ejecutando el notebook 07, no incluido por tamaño)
@@ -112,6 +112,7 @@ Proyecto_Final_ECGAssistant/
 ├── data/
 │   └── (generado ejecutando el notebook 03, no incluido por tamaño)
 │
+├── ECGAssistant_Guia_Completa.pdf              ← guía completa del proyecto
 ├── requirements.txt
 └── README.md
 ```
