@@ -113,6 +113,7 @@ Proyecto_Final_ECGAssistant/
 │   └── (generado ejecutando el notebook 03, no incluido por tamaño)
 │
 ├── ECGAssistant_Guia_Completa.pdf              ← guía completa del proyecto
+├── presentacion.html                           ← diapositivas de la presentación
 ├── requirements.txt
 └── README.md
 ```
