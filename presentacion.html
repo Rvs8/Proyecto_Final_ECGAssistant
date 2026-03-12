@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECGAssistant — Presentación Final</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES (THEME)
+           =========================================== */
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #0f1424;
+            --bg-card: rgba(15, 20, 36, 0.8);
+            --text-primary: #e8eaf0;
+            --text-secondary: #8b95a8;
+            --text-muted: #5a6478;
+            --accent: #00c896;
+            --accent-dim: rgba(0, 200, 150, 0.15);
+            --accent-glow: rgba(0, 200, 150, 0.3);
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #38bdf8;
+
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            --slide-padding: clamp(3rem, 6vw, 5rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration: 0.7s;
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===========================================
+           PROGRESS BAR
+           =========================================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 1000;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* ===========================================
+           NAV DOTS
+           =========================================== */
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .nav-dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            transform: scale(1.3);
+        }
+
+        /* ===========================================
+           SLIDE NUMBER
+           =========================================== */
+        .slide-counter {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            z-index: 100;
+        }
+
+        /* ===========================================
+           SLIDE CONTAINER
+           =========================================== */
+        .slide {
+            min-height: 100vh;
+            padding: var(--slide-padding);
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle gradient overlay for depth */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(0, 200, 150, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(56, 189, 248, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity var(--duration) var(--ease-out-expo),
+                        transform var(--duration) var(--ease-out-expo);
+        }
+
+        .slide.visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.35s; }
+        .slide.visible .reveal:nth-child(5) { transition-delay: 0.45s; }
+        .slide.visible .reveal:nth-child(6) { transition-delay: 0.55s; }
+        .slide.visible .reveal:nth-child(7) { transition-delay: 0.65s; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { transition: opacity 0.3s ease; transform: none; }
+        }
+
+        /* ===========================================
+           TYPOGRAPHY
+           =========================================== */
+        .tag {
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+        }
+
+        .slide-title {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 7vw, 6rem);
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-title span { color: var(--accent); }
+
+        .slide-subtitle {
+            font-size: clamp(1.8rem, 2.8vw, 2.2rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.7;
+            max-width: 900px;
+        }
+
+        /* ===========================================
+           ECG LINE (decorative)
+           =========================================== */
+        .ecg-line {
+            position: fixed;
+            bottom: 5%;
+            left: 0;
+            right: 0;
+            height: 60px;
+            overflow: hidden;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .ecg-line svg {
+            width: 200%;
+            animation: ecgScroll 6s linear infinite;
+        }
+
+        @keyframes ecgScroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ===========================================
+           COMPONENTS
+           =========================================== */
+
+        /* Stat cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card .value {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .label {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .data-table th {
+            font-family: var(--font-display);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.8rem 1rem;
+            border-bottom: 2px solid rgba(0, 200, 150, 0.2);
+            color: var(--accent);
+            font-size: 1.2rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .data-table td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: var(--text-secondary);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0, 200, 150, 0.03);
+        }
+
+        /* Pipeline flow */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+
+        .pipeline-step {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 1.3rem;
+            color: var(--accent);
+            position: relative;
+        }
+
+        .pipeline-step small {
+            display: block;
+            font-family: var(--font-body);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-top: 0.3rem;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent);
+            font-size: 1.2rem;
+            opacity: 0.5;
+        }
+
+        /* Two column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+            .nav-dots { display: none; }
+        }
+
+        /* Architecture diagram */
+        .arch-layer {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 0.8rem 1.3rem;
+            margin: 0.35rem 0;
+            font-family: var(--font-mono);
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .arch-layer .dims {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .arch-layer.highlight {
+            border-color: rgba(0, 200, 150, 0.3);
+            background: rgba(0, 200, 150, 0.05);
+            color: var(--accent);
+        }
+
+        .arch-connector {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            padding: 0.2rem 0;
+        }
+
+        /* Bullet list */
+        .bullet-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .bullet-list li {
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.85rem;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Confusion matrix */
+        .matrix {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            gap: 2px;
+            max-width: 400px;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .matrix-cell {
+            padding: 1rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 1.4rem;
+            border-radius: 4px;
+        }
+
+        .matrix-header {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            padding: 0.5rem;
+            font-family: var(--font-body);
+        }
+
+        .matrix-tp { background: rgba(0, 200, 150, 0.15); color: var(--accent); }
+        .matrix-tn { background: rgba(0, 200, 150, 0.08); color: var(--accent); }
+        .matrix-fp { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .matrix-fn { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* Highlight box */
+        .highlight-box {
+            background: rgba(0, 200, 150, 0.06);
+            border-left: 3px solid var(--accent);
+            padding: 1.2rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+        }
+
+        .highlight-box strong { color: var(--accent); }
+
+        /* Badge / chip */
+        .chip {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            padding: 0.4rem 1rem;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 4px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            margin: 0.3rem;
+        }
+
+        /* Section divider slides */
+        .section-slide {
+            align-items: center;
+            text-align: center;
+        }
+
+        .section-slide .slide-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+        }
+
+        /* Rubric bars */
+        .rubric {
+            margin: 0.6rem 0;
+        }
+
+        .rubric-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .rubric-header .name { color: var(--text-secondary); font-size: 1.35rem; }
+        .rubric-header .score { color: var(--accent); font-family: var(--font-mono); font-size: 1.35rem; }
+
+        .rubric-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .rubric-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 1.2s var(--ease-out-expo);
+            width: 0;
+        }
+
+        .slide.visible .rubric-fill { width: var(--fill); }
+
+        /* Cost table styling */
+        .cost-zero {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Keyboard hint */
+        .keyboard-hint {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            opacity: 0.5;
+            z-index: 100;
+            transition: opacity 1s ease;
+        }
+
+        .keyboard-hint.hidden { opacity: 0; }
+    </style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Navigation dots -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- Slide counter -->
+<div class="slide-counter" id="slideCounter"></div>
+
+<!-- Keyboard hint -->
+<div class="keyboard-hint" id="keyHint">Flechas &uarr;&darr; o scroll para navegar</div>
+
+<!-- ECG decorative line (shared) -->
+<div class="ecg-line">
+    <svg viewBox="0 0 2400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="0,40 50,40 60,40 70,35 80,40 100,40 110,40 120,38 130,10 140,70 150,25 160,40 170,40 200,40 250,40 260,40 270,35 280,40 300,40 310,40 320,38 330,10 340,70 350,25 360,40 370,40 400,40 450,40 460,40 470,35 480,40 500,40 510,40 520,38 530,10 540,70 550,25 560,40 570,40 600,40 650,40 660,40 670,35 680,40 700,40 710,40 720,38 730,10 740,70 750,25 760,40 770,40 800,40 850,40 860,40 870,35 880,40 900,40 910,40 920,38 930,10 940,70 950,25 960,40 970,40 1000,40 1050,40 1060,40 1070,35 1080,40 1100,40 1110,40 1120,38 1130,10 1140,70 1150,25 1160,40 1170,40 1200,40 1250,40 1260,40 1270,35 1280,40 1300,40 1310,40 1320,38 1330,10 1340,70 1350,25 1360,40 1370,40 1400,40 1450,40 1460,40 1470,35 1480,40 1500,40 1510,40 1520,38 1530,10 1540,70 1550,25 1560,40 1570,40 1600,40 1650,40 1660,40 1670,35 1680,40 1700,40 1710,40 1720,38 1730,10 1740,70 1750,25 1760,40 1770,40 1800,40 1850,40 1860,40 1870,35 1880,40 1900,40 1910,40 1920,38 1930,10 1940,70 1950,25 1960,40 1970,40 2000,40 2050,40 2060,40 2070,35 2080,40 2100,40 2110,40 2120,38 2130,10 2140,70 2150,25 2160,40 2170,40 2200,40 2250,40 2260,40 2270,35 2280,40 2300,40 2310,40 2320,38 2330,10 2340,70 2350,25 2360,40 2370,40 2400,40" stroke="#00c896" stroke-width="1.5"/>
+    </svg>
+</div>
+
+<!-- ============================================
+     SLIDE 1: PORTADA
+     ============================================ -->
+<section class="slide" id="slide-1">
+    <span class="tag reveal">Bootcamp KeepCoding IA &mdash; Ed.4 &mdash; 2026</span>
+    <h1 class="slide-title reveal" style="font-size:clamp(3rem,6vw,5rem)">ECG<span>Assistant</span></h1>
+    <p class="slide-subtitle reveal">Detección y explicación de arritmias cardíacas<br>con Deep Learning, Fine-Tuning y RAG</p>
+    <div style="margin-top:2rem" class="reveal">
+        <span class="chip">CNN 1D</span>
+        <span class="chip">Gemma 3 QLoRA</span>
+        <span class="chip">FAISS RAG</span>
+    </div>
+    <p style="margin-top:2.5rem;color:var(--text-muted);font-size:0.9rem" class="reveal">
+        Roger Verges &middot; Raul Sanchez &middot; Matteo Romanello &middot; Matias Cavallo
+    </p>
+</section>
+
+<!-- ============================================
+     SLIDE 2: EL PROBLEMA
+     ============================================ -->
+<section class="slide" id="slide-2">
+    <span class="tag reveal">01 &mdash; Problema de negocio</span>
+    <h2 class="slide-title reveal">+300M de ECGs al año. <span>Nadie los explica.</span></h2>
+    <div class="reveal">
+        <div class="highlight-box" style="font-size:1.5rem;border-left-width:4px;margin-bottom:1.5rem">
+            Existen soluciones (KardiaMobile, Apple Watch, Cardiologs) que <strong>clasifican arritmias con IA</strong>, pero hasta donde sabemos <strong style="color:var(--danger)">ninguna traduce el resultado a lenguaje natural</strong> comprensible. Ninguna opera en español. Un paciente recibe "Posible fibrilación auricular" y no sabe si ir a urgencias o ignorarlo.
+        </div>
+    </div>
+    <div class="two-col">
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">EL MERCADO</p>
+            <ul class="bullet-list">
+                <li>Mercado ECG con IA: <strong style="color:var(--accent)">$1.34B (2024) &rarr; $3.34B (2029)</strong>, CAGR 20%</li>
+                <li>Wearables cardíacos: $1.98B &rarr; $3.54B en 2030</li>
+                <li>Enfermedades cardiovasculares: <strong style="color:var(--danger)">primera causa de muerte</strong> mundial</li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">EL USUARIO</p>
+            <ul class="bullet-list">
+                <li>Clínicas de <strong style="color:var(--text-primary)">atención primaria en LATAM</strong> y pacientes con wearables</li>
+                <li>25.000&ndash;30.000 cardiólogos para <strong style="color:var(--text-primary)">650M de habitantes</strong></li>
+                <li>Zonas rurales: <strong style="color:var(--text-primary)">semanas de espera</strong> para una consulta con especialista</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 2B: QUÉ ES UN ECG (para técnicos IA)
+     ============================================ -->
+<section class="slide" id="slide-2b">
+    <span class="tag reveal">01b &mdash; ¿Qué es un ECG?</span>
+    <h2 class="slide-title reveal">La señal que clasifica <span>nuestra CNN</span></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <img src="ecg_waveform.png" alt="ECG normal: ondas P, QRS, T" style="width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.06)">
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">¿CÓMO SE LEE?</p>
+            <ul class="bullet-list">
+                <li>Un ECG es una <strong style="color:var(--text-primary)">serie temporal 1D</strong>: voltaje (mV) vs tiempo, muestreada a 360 Hz</li>
+                <li><strong style="color:#38bdf8">Onda P</strong> = activación auricular. <strong style="color:#f59e0b">QRS</strong> = contracción ventricular (el pico R es nuestro punto de referencia). <strong style="color:#c084fc">Onda T</strong> = recuperación</li>
+                <li>Cada latido = <strong style="color:var(--text-primary)">288 muestras</strong> (ventana de 0.8s centrada en el pico R)</li>
+                <li>Las arritmias alteran la <strong style="color:var(--accent)">morfología</strong> de estas ondas: QRS más ancho, P ausente, intervalos irregulares</li>
+                <li>La CNN aprende estos patrones morfológicos <strong style="color:var(--accent)">directamente de la señal cruda</strong>, sin feature engineering manual</li>
+            </ul>
+            <div class="highlight-box" style="margin-top:1rem">
+                <strong>Input de la CNN:</strong> un vector de 288 floats normalizados (Z-score). <strong>Output:</strong> probabilidad Normal vs Anormal.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 3: ESTADO DEL ARTE Y PROPUESTA DE VALOR
+     ============================================ -->
+<section class="slide" id="slide-3">
+    <span class="tag reveal">02 &mdash; Estado del arte</span>
+    <h2 class="slide-title reveal">Soluciones existentes y <span>nuestro aporte</span></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">LO QUE YA EXISTE</p>
+            <ul class="bullet-list">
+                <li>Existen soluciones comerciales (KardiaMobile, Apple Watch, Cardiologs) que <strong style="color:var(--text-primary)">clasifican arritmias con IA</strong></li>
+                <li>Todas producen una etiqueta: "Normal", "Posible AFib", "Inclasificable"</li>
+                <li>Hasta donde sabemos, <strong style="color:var(--danger)">ninguna traduce ese resultado a lenguaje natural</strong> comprensible para un profesional de triage o un paciente</li>
+                <li>Ninguna opera nativamente en español ni se respalda con documentación clínica actualizable</li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">CASO DE USO: APOYO AL TRIAGE</p>
+            <ul class="bullet-list">
+                <li>En atención primaria o urgencias, el personal de <strong style="color:var(--accent)">triage</strong> no siempre es cardiólogo</li>
+                <li>ECGAssistant puede actuar como <strong style="color:var(--accent)">primer filtro inteligente</strong>: detecta anomalía + genera explicación + recomienda derivación</li>
+                <li>No reemplaza al especialista &mdash; <strong style="color:var(--text-primary)">acelera la priorización</strong> mientras el paciente espera consulta</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 4: NUESTRA SOLUCION
+     ============================================ -->
+<section class="slide" id="slide-4">
+    <span class="tag reveal">03 &mdash; Solución</span>
+    <h2 class="slide-title reveal">Pipeline de <span>3 etapas</span></h2>
+    <div class="pipeline reveal">
+        <div class="pipeline-step">
+            Señal ECG
+            <small>288 muestras @ 360Hz</small>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step" style="border-color:rgba(56,189,248,0.3)">
+            CNN 1D
+            <small>Clasifica Normal/Anormal</small>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step" style="border-color:rgba(192,132,252,0.3)">
+            RAG + FAISS
+            <small>Busca contexto clínico</small>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step">
+            Gemma 3 4B
+            <small>Genera explicación en español</small>
+        </div>
+    </div>
+    <div class="two-col reveal" style="margin-top:1.5rem">
+        <div>
+            <ul class="bullet-list">
+                <li><strong style="color:var(--text-primary)">CNN 1D:</strong> Deep Learning real como pilar central &mdash; no es un bonus</li>
+                <li><strong style="color:var(--text-primary)">Gemma 3 + QLoRA:</strong> Explicaciones clínicas en español sin alucinaciones</li>
+                <li><strong style="color:var(--text-primary)">FAISS + RAG:</strong> Contexto de guías médicas actualizable sin reentrenar</li>
+            </ul>
+        </div>
+        <div>
+            <div class="highlight-box">
+                <strong>3 desafíos de IA distintos</strong> resueltos en un solo pipeline integrado: clasificación de señales, generación de texto clínico, y recuperación de información médica.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 5: DATASET MIT-BIH
+     ============================================ -->
+<section class="slide" id="slide-5">
+    <span class="tag reveal">04 &mdash; Datos</span>
+    <h2 class="slide-title reveal">MIT-BIH: el estándar <span>de referencia</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 02 — Recolección de Datos)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <ul class="bullet-list">
+                <li><strong style="color:var(--text-primary)">PhysioNet:</strong> repositorio público del MIT. MIT-BIH es el <strong style="color:var(--accent)">dataset de arritmias más citado</strong> en investigación cardíaca</li>
+                <li><strong style="color:var(--text-primary)">48 pacientes</strong> disponibles, grabados en Beth Israel Hospital (1975-1979)</li>
+                <li>Cada latido <strong style="color:var(--text-primary)">anotado manualmente por cardiólogos</strong> expertos</li>
+                <li>Seleccionamos <strong style="color:var(--text-primary)">36 de los 48 registros</strong>, eligiendo los que tienen mayor variedad de tipos de arritmias <em style="color:var(--text-muted)">(Notebook 02 — Recolección de Datos)</em></li>
+                <li>Usamos la derivación <strong style="color:var(--text-primary)">MLII</strong> (una de las 12 "vistas" del corazón &mdash; la que mejor captura las ondas principales) a <strong style="color:var(--text-primary)">360 Hz</strong> (360 mediciones por segundo, suficiente para captar todo el detalle clínico)</li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+                <div class="stat-card">
+                    <div class="value">73.737</div>
+                    <div class="label">Latidos extraídos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">288</div>
+                    <div class="label">Muestras por latido</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">360 Hz</div>
+                    <div class="label">Frecuencia muestreo</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">0.8s</div>
+                    <div class="label">Ventana temporal</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 6: PREPROCESAMIENTO
+     ============================================ -->
+<section class="slide" id="slide-6">
+    <span class="tag reveal">05 &mdash; Preprocesamiento</span>
+    <h2 class="slide-title reveal">De 18 clases a <span>2: Normal vs Anormal</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 03 — Preprocesamiento)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <p class="slide-subtitle" style="margin-bottom:1rem">Decisiones clave del preprocesamiento:</p>
+            <ul class="bullet-list">
+                <li><strong style="color:var(--text-primary)">Binarización:</strong> 18 anotaciones &rarr; Normal (N) vs Anormal (resto). El LLM aporta granularidad</li>
+                <li><strong style="color:var(--text-primary)">Desbalance 70/30:</strong> más normales que anormales &rarr; usamos pesos de clase</li>
+                <li><strong style="color:var(--text-primary)">Z-score:</strong> normalización calculada SOLO sobre train (evita data leakage)</li>
+                <li><strong style="color:var(--text-primary)">Split estratificado:</strong> 70/10/20 manteniendo proporción en cada conjunto</li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Conjunto</th><th>Muestras</th><th>Normal</th><th>Anormal</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td style="color:var(--text-primary)">Train (70%)</td><td>51.615</td><td>36.569</td><td>15.046</td></tr>
+                    <tr><td style="color:var(--text-primary)">Val (10%)</td><td>7.374</td><td>5.224</td><td>2.150</td></tr>
+                    <tr><td style="color:var(--text-primary)">Test (20%)</td><td>14.748</td><td>10.449</td><td>4.299</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 7: CNN 1D ARQUITECTURA
+     ============================================ -->
+<section class="slide" id="slide-7">
+    <span class="tag reveal">06 &mdash; Deep Learning</span>
+    <h2 class="slide-title reveal">CNN <span>1D</span>: arquitectura <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 05 — Entrenamiento CNN)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <div class="arch-layer highlight">
+                <span>Entrada: 1 latido (288 valores)</span>
+                <span class="dims">la señal cruda</span>
+            </div>
+            <div class="arch-connector">&darr;</div>
+            <div class="arch-layer">
+                <span>16 "lupas" buscan patrones simples</span>
+                <span class="dims">Conv1d &rarr; 16 filtros</span>
+            </div>
+            <div class="arch-connector">&darr; se reduce a la mitad</div>
+            <div class="arch-layer">
+                <span>32 "lupas" combinan patrones complejos</span>
+                <span class="dims">Conv1d &rarr; 32 filtros</span>
+            </div>
+            <div class="arch-connector">&darr; se reduce a la mitad</div>
+            <div class="arch-layer">
+                <span>Se aplana + Dropout (30% apagado al azar)</span>
+                <span class="dims">evita memorización</span>
+            </div>
+            <div class="arch-connector">&darr;</div>
+            <div class="arch-layer">
+                <span>Comprime a 64 características clave</span>
+                <span class="dims">capa densa</span>
+            </div>
+            <div class="arch-connector">&darr;</div>
+            <div class="arch-layer highlight">
+                <span>Salida: Normal o Anormal</span>
+                <span class="dims">2 probabilidades</span>
+            </div>
+        </div>
+        <div class="reveal">
+            <p style="color:var(--text-secondary);font-size:1.3rem;margin-bottom:1rem"><strong style="color:var(--text-primary)">¿Por qué CNN 1D?</strong></p>
+            <ul class="bullet-list">
+                <li>ECG es serie temporal 1D &mdash; no imagen 2D</li>
+                <li>Detecta patrones morfológicos locales (QRS, onda P, onda T)</li>
+                <li>Más eficiente que Transformer/RNN para 288 puntos</li>
+            </ul>
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-top:1.5rem">
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">150K</div>
+                    <div class="label">Parámetros</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">35</div>
+                    <div class="label">Épocas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">Adam</div>
+                    <div class="label">Optimizador (lr=0.001)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">F1</div>
+                    <div class="label">Métrica principal</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 8: RESULTADOS CNN
+     ============================================ -->
+<section class="slide" id="slide-8">
+    <span class="tag reveal">07 &mdash; Resultados CNN</span>
+    <h2 class="slide-title reveal">F1 = <span>0.9867</span> &mdash; Objetivo superado <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 06 — Evaluación)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr 1fr">
+                <div class="stat-card">
+                    <div class="value">0.9867</div>
+                    <div class="label">F1-score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">99%</div>
+                    <div class="label">Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">0.9988</div>
+                    <div class="label">AUC-ROC</div>
+                </div>
+            </div>
+            <div style="margin-top:1.5rem">
+                <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">MATRIZ DE CONFUSIÓN (14.748 test)</p>
+                <div class="matrix">
+                    <div class="matrix-header"></div>
+                    <div class="matrix-header" style="text-align:center">Pred Normal</div>
+                    <div class="matrix-header" style="text-align:center">Pred Anormal</div>
+                    <div class="matrix-header">Real Normal</div>
+                    <div class="matrix-cell matrix-tn">10.398</div>
+                    <div class="matrix-cell matrix-fp">51</div>
+                    <div class="matrix-header">Real Anormal</div>
+                    <div class="matrix-cell matrix-fn">63</div>
+                    <div class="matrix-cell matrix-tp">4.236</div>
+                </div>
+            </div>
+        </div>
+        <div class="reveal">
+            <div class="highlight-box">
+                <strong>98.5%</strong> de arritmias detectadas correctamente
+            </div>
+            <div class="highlight-box" style="border-left-color:var(--danger)">
+                <strong style="color:var(--danger)">63 falsos negativos</strong> (1.5%) &mdash; arritmias no detectadas. El error más crítico en contexto médico.
+            </div>
+            <div class="highlight-box" style="border-left-color:var(--warning)">
+                <strong style="color:var(--warning)">51 falsos positivos</strong> (0.3%) &mdash; falsas alarmas. Costo aceptable.
+            </div>
+            <div class="highlight-box" style="margin-top:1rem">
+                <strong>Objetivo:</strong> F1 &ge; 0.95 &rarr; <strong>Alcanzado: 0.9867</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 9: FINE-TUNING GEMMA 3
+     ============================================ -->
+<section class="slide" id="slide-9">
+    <span class="tag reveal">08 &mdash; Fine-tuning</span>
+    <h2 class="slide-title reveal">Gemma 3 4B + <span>QLoRA</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 07 — Fine-tuning)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <ul class="bullet-list">
+                <li><strong style="color:var(--text-primary)">Cuantización 4-bit:</strong> modelo de ~16GB &rarr; ~5GB. Cabe en Colab T4</li>
+                <li><strong style="color:var(--text-primary)">LoRA r=8:</strong> solo se entrenan adaptadores pequeños en las capas de atención</li>
+                <li><strong style="color:var(--text-primary)">Parámetros entrenables:</strong> 5.9M de 4.3B total (0.14%)</li>
+                <li><strong style="color:var(--text-primary)">200 pares Q&A</strong> clínicos en español</li>
+                <li><strong style="color:var(--text-primary)">3 épocas, 17 min</strong> de entrenamiento en GPU T4</li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">4-bit</div>
+                    <div class="label">Cuantización (nf4)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">0.14%</div>
+                    <div class="label">Params entrenables</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">200</div>
+                    <div class="label">Ejemplos Q&A</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.5rem">17 min</div>
+                    <div class="label">Tiempo training</div>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top:1rem">
+                <strong>Resultado:</strong> Gemma 3 genera explicaciones clínicas en español, ancladas en datos de la CNN, con disclaimers médicos.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 10: RAG CON FAISS
+     ============================================ -->
+<section class="slide" id="slide-10">
+    <span class="tag reveal">09 &mdash; RAG</span>
+    <h2 class="slide-title reveal">Contexto clínico con <span>FAISS</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 08 — RAG)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <p class="slide-subtitle" style="margin-bottom:1rem">Retrieval-Augmented Generation: el LLM consulta documentos verificados antes de responder.</p>
+            <div class="pipeline" style="flex-direction:column;align-items:stretch;gap:0.5rem">
+                <div class="arch-layer"><span>6 documentos clínicos (.md)</span></div>
+                <div class="arch-connector">&darr; chunking (500 palabras, 50 overlap)</div>
+                <div class="arch-layer"><span>Embeddings multilingual (384 dims)</span></div>
+                <div class="arch-connector">&darr; indexación</div>
+                <div class="arch-layer highlight"><span>FAISS IndexFlatL2</span></div>
+                <div class="arch-connector">&darr; k=3 más similares</div>
+                <div class="arch-layer"><span>Contexto inyectado al prompt del LLM</span></div>
+            </div>
+        </div>
+        <div class="reveal">
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">DOCUMENTOS CLÍNICOS</p>
+            <ul class="bullet-list">
+                <li>Fibrilación auricular</li>
+                <li>Extrasístoles ventriculares</li>
+                <li>Taquicardia ventricular</li>
+                <li>Bloqueo auriculoventricular</li>
+                <li>Taquicardia supraventricular</li>
+                <li>Fibrilación ventricular</li>
+            </ul>
+            <div class="highlight-box" style="margin-top:1rem">
+                <strong>Ventaja clave:</strong> actualizar el conocimiento = agregar documentos. Sin reentrenar el modelo.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 11: PIPELINE COMPLETO
+     ============================================ -->
+<section class="slide" id="slide-11">
+    <span class="tag reveal">10 &mdash; Integración</span>
+    <h2 class="slide-title reveal">Pipeline <span>end-to-end</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 09 — Pipeline Completo)</em></h2>
+    <div class="reveal">
+        <div class="pipeline" style="justify-content:center;margin:2rem 0">
+            <div class="pipeline-step" style="text-align:center">
+                <strong>ECG</strong>
+                <small>Señal cruda</small>
+            </div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step" style="text-align:center;border-color:rgba(56,189,248,0.4)">
+                <strong style="color:var(--info)">CNN 1D</strong>
+                <small>Normal/Anormal + confianza</small>
+            </div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step" style="text-align:center;border-color:rgba(192,132,252,0.4)">
+                <strong style="color:#c084fc">RAG</strong>
+                <small>3 chunks relevantes</small>
+            </div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step" style="text-align:center">
+                <strong>Gemma 3</strong>
+                <small>Explicación clínica</small>
+            </div>
+            <span class="pipeline-arrow">&rarr;</span>
+            <div class="pipeline-step" style="text-align:center;border-color:var(--accent)">
+                <strong>Paciente</strong>
+                <small>Informe en español</small>
+            </div>
+        </div>
+    </div>
+    <div class="two-col reveal">
+        <div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem;font-weight:500">SYSTEM PROMPT</p>
+            <div class="highlight-box">
+                Basar respuesta en datos de la CNN. Terminología clínica. Español. Mencionar estudios complementarios. <strong>SIEMPRE</strong> incluir disclaimer médico.
+            </div>
+        </div>
+        <div>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.5rem;font-weight:500">¿POR QUÉ LOS 3 JUNTOS?</p>
+            <ul class="bullet-list">
+                <li><strong style="color:var(--info)">CNN sola:</strong> clasifica pero no explica</li>
+                <li><strong style="color:#c084fc">LLM solo:</strong> explica pero podría alucinar</li>
+                <li><strong style="color:var(--accent)">RAG solo:</strong> recupera pero no interpreta</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 12: DEMO
+     ============================================ -->
+<section class="slide" id="slide-12">
+    <span class="tag reveal">11 &mdash; Resultados del pipeline <em style="font-size:0.8em;color:var(--text-muted)">(Notebook 09)</em></span>
+    <h2 class="slide-title reveal">Output real: <span>Normal</span> vs <span style="color:var(--danger)">Anormal</span></h2>
+    <div class="two-col reveal">
+        <div>
+            <p style="font-size:1.6rem;color:var(--accent);margin-bottom:0.8rem;font-weight:600">CASO 1: SEÑAL NORMAL</p>
+            <div style="background:var(--bg-card);border:1px solid rgba(0,200,150,0.2);border-radius:10px;padding:1.5rem;font-family:var(--font-mono);font-size:1.3rem;line-height:1.8;margin-bottom:1rem">
+                <span style="color:var(--info)">[CNN]</span> <span style="color:var(--accent)">Normal</span> (100.0% confianza)<br>
+                <span style="color:var(--info)">[RAG]</span> Taquicardia_ventricular.md, bloqueo_av.md, fibrilacion_ventricular.md<br>
+                <span style="color:var(--info)">[LLM]</span> Explicación generada
+            </div>
+            <div style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.5rem;font-size:1.4rem;line-height:1.7;color:var(--text-secondary)">
+                <em>"El ECG corresponde a <strong style="color:var(--accent)">Normal</strong> con confianza del 100%. Todas las características — frecuencia, intervalos RR, morfología — coinciden con valores saludables. Se recomienda controles periódicos. <strong style="color:var(--text-primary)">NO sustituye la valoración de un especialista.</strong>"</em>
+            </div>
+        </div>
+        <div>
+            <p style="font-size:1.6rem;color:var(--danger);margin-bottom:0.8rem;font-weight:600">CASO 2: SEÑAL ANORMAL</p>
+            <div style="background:var(--bg-card);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:1.5rem;font-family:var(--font-mono);font-size:1.3rem;line-height:1.8;margin-bottom:1rem">
+                <span style="color:var(--info)">[CNN]</span> <span style="color:var(--danger)">Anormal</span> (100.0% confianza)<br>
+                <span style="color:var(--info)">[RAG]</span> fibrilacion_ventricular.md, Taquicardia_ventricular.md, bloqueo_av.md<br>
+                <span style="color:var(--info)">[LLM]</span> Explicación generada
+            </div>
+            <div style="background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.5rem;font-size:1.4rem;line-height:1.7;color:var(--text-secondary)">
+                <em>"Este ECG indica <strong style="color:var(--danger)">irregularidades significativas</strong>. Patrón eléctrico inconsistente, problemas potenciales con la regulación rítmica. Se recomienda <strong style="color:var(--text-primary)">consultar urgentemente con un cardiólogo</strong>. Estudio ecocardiográfico indicado. <strong style="color:var(--text-primary)">NO sustituye la opinión de un profesional sanitario.</strong>"</em>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 13: EVALUACION LLM
+     ============================================ -->
+<section class="slide" id="slide-13">
+    <span class="tag reveal">12 &mdash; Evaluación LLM</span>
+    <h2 class="slide-title reveal">Evaluación con <span>rúbricas clínicas</span> <em style="font-size:0.5em;color:var(--text-muted);font-weight:400">(Notebook 10)</em></h2>
+    <div class="two-col">
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">4 RÚBRICAS AUTOMÁTICAS (0-3) &mdash; 50 PREGUNTAS</p>
+            <div class="rubric">
+                <div class="rubric-header">
+                    <span class="name">Claridad (estructura y longitud)</span>
+                    <span class="score" style="color:var(--accent)">3.00 / 3.00</span>
+                </div>
+                <div class="rubric-bar"><div class="rubric-fill" style="--fill:100%"></div></div>
+            </div>
+            <div class="rubric">
+                <div class="rubric-header">
+                    <span class="name">Seguridad (disclaimers médicos)</span>
+                    <span class="score">1.00 / 3.00</span>
+                </div>
+                <div class="rubric-bar"><div class="rubric-fill" style="--fill:33%"></div></div>
+            </div>
+            <div class="rubric">
+                <div class="rubric-header">
+                    <span class="name">Anclaje (centrada en la pregunta)</span>
+                    <span class="score">0.98 / 3.00</span>
+                </div>
+                <div class="rubric-bar"><div class="rubric-fill" style="--fill:33%"></div></div>
+            </div>
+            <div class="rubric">
+                <div class="rubric-header">
+                    <span class="name">Precisión (overlap de términos clave)</span>
+                    <span class="score">0.96 / 3.00</span>
+                </div>
+                <div class="rubric-bar"><div class="rubric-fill" style="--fill:32%"></div></div>
+            </div>
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">CONTEXTO DE LOS SCORES</p>
+            <div class="highlight-box" style="border-left-color:var(--accent)">
+                <strong style="color:var(--accent)">Claridad 3/3:</strong> todas las respuestas tienen longitud adecuada y buena estructura. El modelo comunica bien.
+            </div>
+            <div class="highlight-box">
+                <strong>Seguridad 1/3:</strong> el LLM evaluado <strong>aislado</strong> no siempre incluye disclaimers por sí solo. Pero en el pipeline completo (Notebook 09), el system prompt y el RAG los refuerzan &mdash; todas las respuestas finales incluyen el aviso médico.
+            </div>
+            <div class="highlight-box">
+                <strong>Precisión y Anclaje (~1/3):</strong> miden overlap de palabras clave con la respuesta de referencia. El promedio baja porque algunas preguntas difíciles (bloqueos AV, fibrilación ventricular) obtienen 0 &mdash; pero la mayoría obtiene 2/3. Es una limitación del modelo de 4B parámetros con solo 200 ejemplos de entrenamiento.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 14: VIABILIDAD ECONOMICA
+     ============================================ -->
+<section class="slide" id="slide-14">
+    <span class="tag reveal">13 &mdash; Viabilidad económica</span>
+    <h2 class="slide-title reveal">Desarrollo a <span>costo cero</span>, con potencial de mercado</h2>
+    <div class="two-col">
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">COSTO DE DESARROLLO: 0 EUR</p>
+            <table class="data-table">
+                <tbody>
+                    <tr><td>Google Colab (GPU T4)</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td>Dataset MIT-BIH (PhysioNet)</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td>Gemma 3 4B (open source)</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td>FAISS + sentence-transformers</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td>HuggingFace Hub</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td>GitHub (repositorio)</td><td style="color:var(--accent)">Gratis</td></tr>
+                    <tr><td style="color:var(--text-primary);font-weight:600">TOTAL</td><td style="color:var(--accent);font-weight:700;font-size:1.3rem">0 EUR</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">VALUE PROPOSITION</p>
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.8rem">$3.34B*</div>
+                    <div class="label">Mercado potencial 2029 (ECG + IA)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" style="font-size:1.8rem">$50-200</div>
+                    <div class="label">Modelo potencial B2B SaaS por clínica/mes</div>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-top:1rem">
+                <strong>Diferenciador:</strong> único sistema que detecta + explica en español con contexto de guías médicas actualizables (RAG)
+            </div>
+            <ul class="bullet-list" style="margin-top:0.5rem">
+                <li><strong style="color:var(--accent)">Open source</strong> &rarr; genera confianza en el ámbito clínico</li>
+                <li><strong style="color:var(--accent)">RAG actualizable</strong> &rarr; nuevas guías sin reentrenar el modelo</li>
+                <li><strong style="color:var(--accent)">Español nativo</strong> &rarr; diferencial vs toda la competencia</li>
+            </ul>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-top:1.2rem">* Fuente: Research&amp;Markets — <em>AI-Powered Remote ECG Monitoring Market Report</em>, 2025. CAGR 20%.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 15: CONCLUSIONES
+     ============================================ -->
+<section class="slide" id="slide-15">
+    <span class="tag reveal">14 &mdash; Conclusiones <em style="font-size:0.7em;color:var(--text-muted)">(Notebook 11)</em></span>
+    <div class="reveal">
+        <div class="highlight-box" style="font-size:1.5rem;border-left-width:4px;border-left-color:var(--accent);margin-bottom:1.5rem">
+            Construimos un pipeline funcional que toma una señal eléctrica cruda del corazón y, en segundos, produce una <strong style="color:var(--accent)">explicación clínica en español</strong> respaldada por documentación médica. Tres componentes de IA que por separado son insuficientes, pero juntos resuelven un problema real.
+        </div>
+    </div>
+    <div class="two-col">
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">SABEMOS DÓNDE ESTAMOS</p>
+            <ul class="bullet-list">
+                <li>1 derivación (MLII) de 12 posibles &mdash; el ECG clínico ve más</li>
+                <li>Clasificación binaria &mdash; no identifica el tipo de arritmia a nivel de CNN</li>
+                <li>Dataset de 1975-1979 &mdash; señales analógicas vs digitales modernas</li>
+                <li>Herramienta de apoyo al triage, <strong style="color:var(--danger)">nunca un sustituto del cardiólogo</strong></li>
+            </ul>
+        </div>
+        <div class="reveal">
+            <p style="font-size:1.3rem;color:var(--text-muted);margin-bottom:0.8rem;font-weight:500">HACIA DÓNDE ESCALA</p>
+            <ul class="bullet-list">
+                <li><strong style="color:var(--accent)">Multiclase:</strong> identificar tipos específicos de arritmia (AFib, bloqueo AV, TV)</li>
+                <li><strong style="color:var(--accent)">12 derivaciones:</strong> dataset PTB-XL (21.799 ECGs reales)</li>
+                <li><strong style="color:var(--accent)">Tiempo real:</strong> procesamiento continuo, no solo latidos individuales</li>
+                <li><strong style="color:var(--accent)">Validación clínica:</strong> evaluación con cardiólogos reales</li>
+            </ul>
+        </div>
+    </div>
+    <div style="margin-top:1.5rem;display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap" class="reveal">
+        <span class="chip">F1 = 0.9867</span>
+        <span class="chip">AUC = 0.9988</span>
+        <span class="chip">150K parámetros CNN</span>
+        <span class="chip">0.14% params LLM</span>
+        <span class="chip">17 min training</span>
+        <span class="chip">0 EUR desarrollo</span>
+        <span class="chip">11 notebooks</span>
+    </div>
+</section>
+
+<!-- ============================================
+     SLIDE 16: CIERRE / Q&A
+     ============================================ -->
+<section class="slide section-slide" id="slide-16">
+    <span class="tag reveal">Gracias</span>
+    <h2 class="slide-title reveal" style="font-size:clamp(2.5rem,5vw,4rem)">ECG<span>Assistant</span></h2>
+    <p class="slide-subtitle reveal" style="text-align:center">Estamos abiertos a preguntas</p>
+    <p style="margin-top:3rem;color:var(--text-muted);font-size:0.85rem" class="reveal">
+        Roger Verges &middot; Raul Sanchez &middot; Matteo Romanello &middot; Matias Cavallo
+    </p>
+    <p style="color:var(--text-muted);font-size:0.75rem;margin-top:0.5rem" class="reveal">
+        github.com/Rvs8/Proyecto_Final_ECGAssistant
+    </p>
+</section>
+
+<!-- ============================================
+     JAVASCRIPT: Presentation Controller
+     ============================================ -->
+<script>
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.totalSlides = this.slides.length;
+        this.isAnimating = false;
+
+        this.createNavDots();
+        this.setupObserver();
+        this.setupKeyboard();
+        this.setupWheel();
+        this.setupTouch();
+        this.updateCounter();
+        this.hideHintAfterDelay();
+    }
+
+    createNavDots() {
+        const nav = document.getElementById('navDots');
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('aria-label', `Slide ${i + 1}`);
+            dot.addEventListener('click', () => this.goToSlide(i));
+            nav.appendChild(dot);
+        });
+        this.dots = nav.querySelectorAll('.nav-dot');
+    }
+
+    setupObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const index = Array.from(this.slides).indexOf(entry.target);
+                    this.currentSlide = index;
+                    this.updateUI();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        this.slides.forEach(slide => observer.observe(slide));
+    }
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                this.nextSlide();
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                this.prevSlide();
+            }
+        });
+    }
+
+    setupWheel() {
+        let lastWheel = 0;
+        let accumulated = 0;
+        let resetTimer = null;
+        const COOLDOWN = 1400;
+        const THRESHOLD = 50;
+
+        document.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const now = Date.now();
+            if (now - lastWheel < COOLDOWN) return;
+
+            accumulated += e.deltaY;
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => { accumulated = 0; }, 200);
+
+            if (Math.abs(accumulated) < THRESHOLD) return;
+
+            lastWheel = now;
+            if (accumulated > 0) this.nextSlide();
+            else this.prevSlide();
+            accumulated = 0;
+        }, { passive: false });
+    }
+
+    setupTouch() {
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            const diff = touchStartY - e.changedTouches[0].clientY;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) this.nextSlide();
+                else this.prevSlide();
+            }
+        }, { passive: true });
+    }
+
+    nextSlide() {
+        if (this.currentSlide < this.totalSlides - 1) {
+            this.goToSlide(this.currentSlide + 1);
+        }
+    }
+
+    prevSlide() {
+        if (this.currentSlide > 0) {
+            this.goToSlide(this.currentSlide - 1);
+        }
+    }
+
+    goToSlide(index) {
+        this.slides[index].scrollIntoView({ behavior: 'smooth' });
+        this.currentSlide = index;
+        this.updateUI();
+    }
+
+    updateUI() {
+        /* Progress bar */
+        const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+
+        /* Nav dots */
+        this.dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === this.currentSlide);
+        });
+
+        /* Counter */
+        this.updateCounter();
+    }
+
+    updateCounter() {
+        document.getElementById('slideCounter').textContent =
+            `${this.currentSlide + 1} / ${this.totalSlides}`;
+    }
+
+    hideHintAfterDelay() {
+        setTimeout(() => {
+            document.getElementById('keyHint').classList.add('hidden');
+        }, 4000);
+    }
+}
+
+/* Initialize */
+document.addEventListener('DOMContentLoaded', () => {
+    new SlidePresentation();
+});
+</script>
+</body>
+</html>
